@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tutor Dashboard - EducateUZ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <h1>Tutor <span>Dashboard</span></h1>
+
+        <h3>My Active Sessions</h3>
+        {% for session in active_sessions %}
+            <div style="background:#d4edda; padding:15px; border-radius:10px; margin-bottom:20px;">
+                <strong>Currently Tutoring:</strong> {{ session.subject }}
+                <form action="/end_session/{{ session.id }}" method="POST" style="margin-top:10px;">
+                    <button type="submit" class="btn-request" style="background:#dc3545;">End Session & Bill Student</button>
+                </form>
+            </div>
+        {% endfor %}
+
+        <hr>
+
+        <h3>New Requests</h3>
+        {% for session in sessions %}
+            <div style="background:#eee; padding:15px; border-radius:10px; margin-bottom:10px;">
+                <strong>Subject:</strong> {{ session.subject }}
+                <form action="/accept_session/{{ session.id }}" method="POST">
+                    <button type="submit" class="btn-request">Accept Student</button>
+                </form>
+            </div>
+        {% endfor %}
+        
+        <br>
+        <a href="/admin/dashboard" style="color: #666;">Back to Control Panel</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Waiting Room - EducateUZ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta http-equiv="refresh" content="5"> </head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Educate<span>UZ</span></h1>
+        </header>
+
+        {% if session.status == 'Searching' %}
+            <div class="hero">
+                <h2>Finding your tutor...</h2>
+                <p>We are matching you with a <strong>{{ session.subject }}</strong> expert.</p>
+                <div class="loader"></div> </div>
+        {% elif session.status == 'Active' %}
+            <div class="hero">
+                <h2 style="color: #28a745;">Tutor Found!</h2>
+                <p>Your session is ready to begin.</p>
+                <a href="{{ session.zoom_link }}" target="_blank" class="btn-request" style="text-decoration: none; display: block; background: #2d89ef;">Join Zoom Meeting</a>
+            </div>
+        {% endif %}
+        
+        <br>
+        <a href="/" style="color: #666;">Cancel Request</a>
+    </div>
+</body>
+</html>

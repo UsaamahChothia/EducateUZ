@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Master Control - EducateUZ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-container" style="width: 750px;">
+        <h1>Master <span>Control</span></h1>
+        
+        <div style="background:#fff; padding:20px; border-radius:15px; margin-bottom:20px; display:flex; justify-content:space-around;">
+            <a href="/" class="btn-request" style="background:#6c757d; text-decoration:none; padding:10px;">View as Student</a>
+            <a href="/tutor" class="btn-request" style="background:#17a2b8; text-decoration:none; padding:10px;">View as Tutor</a>
+        </div>
+
+        <div style="background:#2d89ef; color:white; padding:20px; border-radius:15px; margin-bottom:20px;">
+            <strong>Total Revenue Generated:</strong> R{{ revenue }}
+        </div>
+
+        <h3>Tutor Vetting</h3>
+        {% for tutor in tutors %}
+            <div style="background:#eee; padding:15px; border-radius:10px; margin-bottom:10px; text-align:left;">
+                <strong>{{ tutor.email }}</strong><br>
+                <small>{{ tutor.qualifications }}</small>
+                <form action="/admin/approve/{{ tutor.id }}" method="POST">
+                    <button type="submit" style="margin-top:10px; padding:5px; background:#28a745; color:white; border:none; border-radius:5px; cursor:pointer;">Approve Tutor</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

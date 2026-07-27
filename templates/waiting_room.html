@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Waiting Room - EducateUZ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% if session.status == 'Searching' or session.status == 'Active' %}
+    <meta http-equiv="refresh" content="5">
+    {% endif %}
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Educate<span>UZ</span></h1>
+        </header>
+
+        {% if session.status == 'Searching' %}
+            <div class="hero">
+                <h2>Finding your tutor...</h2>
+                <p>We are matching you with an expert for <strong>{{ session.subject }}</strong>.</p>
+                <div class="loader"></div> 
+            </div>
+        {% elif session.status == 'Active' %}
+            <div class="hero">
+                <h2 style="color: #28a745;">Tutor Found!</h2>
+                <p>Your session is ready to begin.</p>
+                <a href="{{ session.zoom_link }}" target="_blank" class="btn-request" style="text-decoration: none; display: block; background: #2d89ef;">Join Zoom Meeting</a>
+                <p style="font-size: 0.8em; color: #888; margin-top:10px;">The meter is running...</p>
+            </div>
+        {% elif session.status == 'Completed' %}
+            <div class="hero">
+                <h2>Session Summary</h2>
+                <hr>
+                <h3>Total Cost: R{{ session.final_price }}</h3>
+                <p style="font-size: 0.8em; color: #888;">Thank you for using EducateUZ!</p>
+                <a href="/" class="btn-request" style="text-decoration: none; display: block;">Book Another Session</a>
+            </div>
+        {% endif %}
+        
+        <br>
+        <a href="/" style="color: #666; font-size: 0.9em;">Return Home</a>
+    </div>
+</body>
+</html>

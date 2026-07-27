@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EducateUZ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Educate<span>UZ</span></h1>
+            <p style="font-size: 0.8em; color: #888;">Logged in as: {{ current_user.email }}</p>
+        </header>
+        
+        <div class="hero">
+            <h2>Ready to learn?</h2>
+            <p>Book a live Zoom session in seconds.</p>
+        </div>
+
+        <form action="/request_tutor" method="POST" class="request-box">
+            <select name="subject" id="subject" required>
+                <option value="" disabled selected>Select a school subject...</option>
+                {% for phase, subject_list in subjects.items() %}
+                    <optgroup label="{{ phase }}">
+                        {% for subject in subject_list %}
+                            <option value="{{ subject }}">{{ subject }}</option>
+                        {% endfor %}
+                    </optgroup>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn-request">Request Tutor Now</button>
+        </form>
+        <br>
+        <a href="/logout" style="color: #666; font-size: 0.8em;">Logout</a>
+    </div>
+</body>
+</html>

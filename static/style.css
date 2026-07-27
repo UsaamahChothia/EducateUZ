@@ -1,0 +1,7 @@
+body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; padding: 50px; }
+.app-container { background: white; width: 350px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding: 20px; text-align: center; }
+h1 span { color: #2d89ef; } /* Zoom Blue */
+.request-box { margin-top: 30px; }
+select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 10px; }
+.btn-request { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+.btn-request:hover { background: #333; }
