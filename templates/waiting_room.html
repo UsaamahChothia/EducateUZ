@@ -1,43 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Waiting Room - EducateUZ</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Session Match - EducateUZ</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    {% if session.status == 'Searching' or session.status == 'Active' %}
-    <meta http-equiv="refresh" content="5">
-    {% endif %}
 </head>
 <body>
     <div class="app-container">
         <header>
             <h1>Educate<span>UZ</span></h1>
+            <p class="user-tag">{{ session.subject }}</p>
         </header>
 
-        {% if session.status == 'Searching' %}
-            <div class="hero">
-                <h2>Finding your tutor...</h2>
-                <p>We are matching you with an expert for <strong>{{ session.subject }}</strong>.</p>
-                <div class="loader"></div> 
-            </div>
-        {% elif session.status == 'Active' %}
-            <div class="hero">
-                <h2 style="color: #28a745;">Tutor Found!</h2>
-                <p>Your session is ready to begin.</p>
-                <a href="{{ session.zoom_link }}" target="_blank" class="btn-request" style="text-decoration: none; display: block; background: #2d89ef;">Join Zoom Meeting</a>
-                <p style="font-size: 0.8em; color: #888; margin-top:10px;">The meter is running...</p>
-            </div>
-        {% elif session.status == 'Completed' %}
-            <div class="hero">
-                <h2>Session Summary</h2>
-                <hr>
-                <h3>Total Cost: R{{ session.final_price }}</h3>
-                <p style="font-size: 0.8em; color: #888;">Thank you for using EducateUZ!</p>
-                <a href="/" class="btn-request" style="text-decoration: none; display: block;">Book Another Session</a>
-            </div>
-        {% endif %}
-        
+        <!-- STATE 1: SEARCHING -->
+        <div id="state-searching" class="hero" style="display: {{ 'block' if session.status == 'Searching' else 'none' }};">
+            <h2>Matching with a verified tutor...</h2>
+            <p>Scanning online subject specialists for <strong>{{ session.subject }}</strong>.</p>
+            <div class="loader"></div>
+            <form action="{{ url_for('cancel_session', session_id=session.id) }}" method="POST" style="margin-top: 15px;">
+                <button type="submit" class="btn-request btn-secondary" style="padding: 8px; font-size: 0.85rem;">Cancel Request</button>
+            </form>
+        </div>
+
+        <!-- STATE 2: ACTIVE (TUTOR FOUND) -->
+        <div id="state-active" class="hero" style="display: {{ 'block' if session.status == 'Active' else 'none' }};">
+            <div class="pulse-badge"><div class="pulse-dot"></div> Live Classroom Connected</div>
+            <h2>Tutor Found!</h2>
+            <p id="tutor-info" style="margin-bottom: 15px;">Your tutor is waiting in the video room.</p>
+            <a id="zoom-button" href="{{ session.zoom_link or '#' }}" target="_blank" class="btn-request" style="background:#2563eb;">
+                Launch Zoom Classroom
+            </a>
+            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 12px;">Meter billing active (R5.00/min)</p>
+        </div>
+
+        <!-- STATE 3: COMPLETED -->
+        <div id="state-completed" class="hero" style="display: {{ 'block' if session.status == 'Completed' else 'none' }};">
+            <h2>Session Summary</h2>
+            <hr style="margin: 15px 0; border: none; border-top: 1px solid #e2e8f0;">
+            <p style="font-size: 0.9rem;">Total Fee:</p>
+            <h2 id="final-cost" style="color: #16a34a; font-size: 1.8rem; margin: 5px 0;">R{{ session.final_price }}</h2>
+            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 20px;">Receipt and attendance confirmation dispatched.</p>
+            <a href="{{ url_for('index') }}" class="btn-request">Book Another Session</a>
+        </div>
+
         <br>
-        <a href="/" style="color: #666; font-size: 0.9em;">Return Home</a>
+        <a href="{{ url_for('index') }}" style="color: #64748b; font-size: 0.85rem; text-decoration: none;">&larr; Return to Dashboard</a>
     </div>
+
+    <script>
+        const sessionId = {{ session.id }};
+        let currentStatus = "{{ session.status }}";
+
+        // Poll every 2.5 seconds without screen reload
+        function checkStatus() {
+            if (currentStatus === "Completed" || currentStatus === "Cancelled") return;
+
+            fetch(`/api/session_status/${sessionId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status !== currentStatus) {
+                        currentStatus = data.status;
+                        
+                        // Hide all states
+                        document.getElementById('state-searching').style.display = 'none';
+                        document.getElementById('state-active').style.display = 'none';
+                        document.getElementById('state-completed').style.display = 'none';
+
+                        if (currentStatus === 'Active') {
+                            document.getElementById('zoom-button').href = data.zoom_link;
+                            if (data.tutor) {
+                                document.getElementById('tutor-info').innerText = `Matched with: ${data.tutor}`;
+                            }
+                            document.getElementById('state-active').style.display = 'block';
+                        } else if (currentStatus === 'Completed') {
+                            document.getElementById('final-cost').innerText = `R${data.final_price}`;
+                            document.getElementById('state-completed').style.display = 'block';
+                        }
+                    }
+                })
+                .catch(err => console.error("Poll error:", err));
+        }
+
+        setInterval(checkStatus, 2500);
+    </script>
 </body>
 </html>

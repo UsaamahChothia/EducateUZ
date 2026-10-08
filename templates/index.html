@@ -1,24 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>EducateUZ</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EducateUZ - Instant 1-on-1 Tutoring</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="app-container">
         <header>
             <h1>Educate<span>UZ</span></h1>
-            <p style="font-size: 0.8em; color: #888;">Logged in as: {{ current_user.email }}</p>
+            <span class="user-tag">{{ current_user.email }} (Student)</span>
         </header>
-        
+
         <div class="hero">
-            <h2>Ready to learn?</h2>
-            <p>Book a live Zoom session in seconds.</p>
+            <h2>On-Demand Academic Help</h2>
+            <p>Connect to a verified IEB / CAPS subject tutor in real time.</p>
         </div>
 
-        <form action="/request_tutor" method="POST" class="request-box">
+        <form action="{{ url_for('request_tutor') }}" method="POST" class="request-box">
             <select name="subject" id="subject" required>
-                <option value="" disabled selected>Select a school subject...</option>
+                <option value="" disabled selected>Select school subject...</option>
                 {% for phase, subject_list in subjects.items() %}
                     <optgroup label="{{ phase }}">
                         {% for subject in subject_list %}
@@ -27,10 +29,11 @@
                     </optgroup>
                 {% endfor %}
             </select>
-            <button type="submit" class="btn-request">Request Tutor Now</button>
+            <button type="submit" class="btn-request">Request Instant Session</button>
         </form>
+
         <br>
-        <a href="/logout" style="color: #666; font-size: 0.8em;">Logout</a>
+        <a href="{{ url_for('logout') }}" style="color: #64748b; font-size: 0.85rem; text-decoration: none;">Sign Out</a>
     </div>
 </body>
 </html>
